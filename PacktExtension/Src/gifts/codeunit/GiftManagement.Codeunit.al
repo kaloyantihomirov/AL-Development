@@ -12,8 +12,6 @@ codeunit 50202 "Gift Management_CUS_NTG"
         SalesLine.SetFilter("Line Discount %", '<>100');
         SalesLine.SetRange(GiftApplied_CUS_NTG, false);
 
-        if SalesLine.GiftApplied_CUS_NTG then Message(GiftAlreadyAppliedLbl);
-
         if SalesLine.FindSet() then
             repeat
                 //Integration event raised
