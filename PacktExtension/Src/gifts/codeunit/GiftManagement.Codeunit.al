@@ -4,12 +4,15 @@ codeunit 50202 "Gift Management_CUS_NTG"
     var
         SalesLine: Record "Sales Line";
         Handled: Boolean;
+        GiftAlreadyAppliedLbl: Label 'Gifts based on these sales lines are already applied';
     begin
         SalesLine.SetRange("Document Type", SalesHeader."Document Type");
         SalesLine.SetRange("Document No.", SalesHeader."No.");
         SalesLine.SetRange(Type, SalesLine.Type::Item);
         SalesLine.SetFilter("Line Discount %", '<>100');
         SalesLine.SetRange(GiftApplied_CUS_NTG, false);
+
+        if SalesLine.GiftApplied_CUS_NTG then Message(GiftAlreadyAppliedLbl);
 
         if SalesLine.FindSet() then
             repeat
@@ -38,7 +41,6 @@ codeunit 50202 "Gift Management_CUS_NTG"
         GiftCampaign.SetFilter(EndingDate, '>=%1', SalesHeader."Order Date");
         GiftCampaign.SetRange(Inactive, false);
         GiftCampaign.SetFilter(MinimumOrderQuantity, '<= %1', SalesLine.Quantity);
-        SalesLine.Validate(GiftApplied_CUS_NTG, true);
 
         if GiftCampaign.FindFirst() then begin
             LineNo := GetLastSalesDocumentLineNo(SalesHeader);
@@ -47,7 +49,10 @@ codeunit 50202 "Gift Management_CUS_NTG"
             SalesLineGift."Line No." := LineNo + 10000;
             SalesLineGift.Validate(Quantity, GiftCampaign.GiftQuantity);
             SalesLineGift.Validate("Line Discount %", 100);
-            if SalesLineGift.Insert() then SalesLine.Validate(GiftApplied_CUS_NTG, true);
+            if SalesLineGift.Insert() then begin
+                SalesLine.Validate(GiftApplied_CUS_NTG, true);
+                SalesLine.Modify();
+            end;
         end;
     end;
 
@@ -93,13 +98,14 @@ codeunit 50202 "Gift Management_CUS_NTG"
     local procedure DoGiftCheck(var SalesLine: Record "Sales Line"; var GiftCampaign: Record "Gift Campaign_CUS_NTG"; var Handled: Boolean)
     var
         PacktSetup: Record "Packt Setup_CUS_NTG";
-        GiftAlertLbl: Label 'Attention: there is an active promotion for item %1. if you buy %2 you can have a gift of %3';
+        GiftAlertLbl: Label 'Attention: There is an active promotion for item %1. If you buy %2, you can have a gift of %3. Get %4 more to activate the promotion.',
+                Comment = '%1 is the item no.; %2 is the minimum quantity needed for the promotion; %3 is the gift quantity (how many items you get for free).; %4 is the count of items needed in order to activate the promotion';
     begin
         if Handled then
             exit;
         PacktSetup.Get();
         if (SalesLine.Quantity < GiftCampaign.MinimumOrderQuantity) and (GiftCampaign.MinimumOrderQuantity - SalesLine.Quantity <= PacktSetup."Gift Tolerance Qty") then
-            Message(GiftAlertLbl, SalesLine."No.", Format(GiftCampaign.MinimumOrderQuantity), Format(GiftCampaign.GiftQuantity));
+            Message(GiftAlertLbl, SalesLine."No.", Format(GiftCampaign.MinimumOrderQuantity), Format(GiftCampaign.GiftQuantity), Format(GiftCampaign.MinimumOrderQuantity - SalesLine.Quantity));
     end;
 
     [IntegrationEvent(true, false)]
