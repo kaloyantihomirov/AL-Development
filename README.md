@@ -8,7 +8,6 @@ Welcome to my AL Development repository! This space is dedicated to my journey a
 - [Projects](#projects)
 - [Learning Resources](#learning-resources)
 - [Contributions](#contributions)
-- [Contact](#contact)
 
 ## Introduction
 
@@ -16,31 +15,29 @@ This repository documents my progress and experiments as I learn and grow in the
 
 ## Projects
 
-### Extension 1
-- **Description:** Brief description of the extension.
-- **Features:** Key features or functionalities.
-- **Status:** Completed/In Progress
+### PacktExtension
 
-### Extension 2
-- **Description:** Brief description of the extension.
-- **Features:** Key features or functionalities.
-- **Status:** Completed/In Progress
+**Description:** This extension addresses various business requirements for the sales and vendor quality management departments.
 
-(Include additional projects as needed)
+**Main Features:**
+
+- **Customer Classification:** Allows classification of customers based on custom categories, with default categories assigned automatically.
+- **Gift Campaigns:** Enables creation of gift campaigns for customer categories, with automatic gift assignment to sales orders when campaigns are active.
+- **Sales Order Alerts:** Alerts sales operators when order quantities approach campaign promotion thresholds.
+- **Item Ledger Entries:** Stores customer category values in item ledger entries for future reporting.
+- **Item Charges Calculation:** Calculates and assigns item charges to sales orders based on defined criteria.
+- **Vendor Quality Management:** Classifies vendors based on CSQ requirements and financial data, with a rating system that restricts purchase order release for non-compliant vendors.
 
 ## Learning Resources
 
 These are some of the resources that have helped me along the way:
 
 - *Mastering Microsoft Dynamics 365 Business Central* by Stefano Demiliani and Duilio Tacconi
-- (Add other books, courses, articles, etc.)
+- *Dynamics 365 Business Central Development Quick Start Guide* by Stefano Demiliani and Duilio Tacconi
+- *Programming Microsoft Dynamics 365 Business Central - Sixth Edition* by Marije Brummel, David Studebaker, and Chris Studebaker
 
 ## Contributions
 
 I welcome contributions from the community! If you have suggestions, improvements, or want to collaborate on a project, feel free to fork this repository and submit a pull request. Let's learn and grow together.
 
-## Contact
-
-If you have any questions or just want to connect, you can reach me at:
-
-- **Email:** [your.email@example.com](mailto:your.email@example.com
+Thank you for visiting my repository. Happy coding!
