@@ -9,6 +9,7 @@ codeunit 50202 "Gift Management_CUS_NTG"
         SalesLine.SetRange("Document No.", SalesHeader."No.");
         SalesLine.SetRange(Type, SalesLine.Type::Item);
         SalesLine.SetFilter("Line Discount %", '<>100');
+        SalesLine.SetRange(GiftApplied_CUS_NTG, false);
 
         if SalesLine.FindSet() then
             repeat
@@ -37,6 +38,7 @@ codeunit 50202 "Gift Management_CUS_NTG"
         GiftCampaign.SetFilter(EndingDate, '>=%1', SalesHeader."Order Date");
         GiftCampaign.SetRange(Inactive, false);
         GiftCampaign.SetFilter(MinimumOrderQuantity, '<= %1', SalesLine.Quantity);
+        SalesLine.Validate(GiftApplied_CUS_NTG, true);
 
         if GiftCampaign.FindFirst() then begin
             LineNo := GetLastSalesDocumentLineNo(SalesHeader);
@@ -45,7 +47,7 @@ codeunit 50202 "Gift Management_CUS_NTG"
             SalesLineGift."Line No." := LineNo + 10000;
             SalesLineGift.Validate(Quantity, GiftCampaign.GiftQuantity);
             SalesLineGift.Validate("Line Discount %", 100);
-            if SalesLineGift.Insert() then;
+            if SalesLineGift.Insert() then SalesLine.Validate(GiftApplied_CUS_NTG, true);
         end;
     end;
 
