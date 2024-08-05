@@ -69,7 +69,7 @@ table 50203 "Vendor Quality_CUS_NTG"
         {
             Caption = 'Update Date';
         }
-        field(11; InvoiceYearN; Decimal)
+        field(11; InvoicedYearN; Decimal)
         {
             Caption = 'Invoiced for current year (N)';
         }

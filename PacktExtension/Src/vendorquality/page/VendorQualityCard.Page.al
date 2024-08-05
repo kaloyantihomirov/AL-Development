@@ -59,7 +59,7 @@ page 50204 "Vendor Quality Card_CUS_NTG"
             {
                 Caption = 'Financials';
 
-                field(InvoiceYearN; Rec.InvoiceYearN)
+                field(InvoicedYearN; Rec.InvoicedYearN)
                 {
                     Editable = false;
                 }
