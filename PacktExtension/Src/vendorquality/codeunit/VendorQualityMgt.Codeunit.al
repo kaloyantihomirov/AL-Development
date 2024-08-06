@@ -29,8 +29,8 @@ codeunit 50203 VendorQualityMgt_CUS_NTG
         VendorQuality.InvoicedYearN := GetInvoicedAmount(VendorQuality."Vendor No.", DMY2Date(1, 1, Year), TODAY);
         VendorQuality.InvoicedYearN1 := GetInvoicedAmount(VendorQuality."Vendor No.", DMY2DATE(1, 1, Year - 1), DMY2DATE(31, 12, Year - 1));
         VendorQuality.InvoicedYearN2 := GetInvoicedAmount(VendorQuality."Vendor No.", DMY2DATE(1, 1, Year - 2), DMY2DATE(31, 12, Year - 2));
-        VendorQuality.DueAmount := GetDueAmount(VendorQuality."Vendor No.", TRUE);
-        VendorQuality.AmountNotDue := GetDueAmount(VendorQuality."Vendor No.", FALSE);
+        VendorQuality.DueAmount := GetDueAmount(VendorQuality."Vendor No.", true);
+        VendorQuality.AmountNotDue := GetDueAmount(VendorQuality."Vendor No.", false);
         DW.Close();
     end;
 

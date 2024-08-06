@@ -22,4 +22,18 @@ codeunit 50201 GeneralSubscribers_CUS_NTG
                     Error(CustBlockedCategoryLbl, Customer."No.");
             end;
     end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Release Purchase Document", 'OnBeforeManualReleasePurchaseDoc', '', false, false)]
+    local procedure QualityCheckForReleasingPurchaseDoc(var PurchaseHeader: Record "Purchase Header")
+    var
+        VendorQuality: Record "Vendor Quality_CUS_NTG";
+        PacktSetup: Record "Packt Setup_CUS_NTG";
+        ErrNoMinimumRateLbl: Label 'Vendor %1 has a rate of %2 and it''s under the required minimum value (%3)';
+    begin
+        PacktSetup.Get();
+        if VendorQuality.Get(PurchaseHeader."Buy-from Vendor No.") then
+            if VendorQuality.Rate < PacktSetup."Minimum Accepted Vendor Rate" then
+                Error(ErrNoMinimumRateLbl, PurchaseHeader."Buy-from Vendor No.",
+                Format(VendorQuality.Rate), Format(PacktSetup."Minimum Accepted Vendor Rate"));
+    end;
 }
