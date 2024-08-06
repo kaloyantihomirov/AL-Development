@@ -49,11 +49,25 @@ codeunit 50205 "ShipmentComissionMgtNTG"
         SalesLine.Init();
         SalesLine."Document Type" := SalesHeader."Document Type";
         SalesLine."Document No." := SalesHeader."No.";
+        SalesLine."Line No." := GetNextLineNo(SalesHeader);
         SalesLine.Validate(Type, SalesLine.Type::"Charge (Item)");
         SalesLine.Validate("No.", PacktSetup."Default Charge (Item)");
         SalesLine.Validate(Quantity, 1);
         SalesLine.Validate("Unit Price", TotalCharge);
         SalesLine.Insert(true);
+    end;
+
+    local procedure GetNextLineNo(var SalesHeader: Record "Sales Header"): Integer
+    var
+        SalesLine: Record "Sales Line";
+    begin
+        SalesLine.SetRange("Document Type", SalesHeader."Document Type");
+        SalesLine.SetRange("Document No.", SalesHeader."No.");
+
+        if SalesLine.FindLast() then
+            exit(SalesLine."Line No." + 10000)
+        else
+            exit(10000);
     end;
 
     [IntegrationEvent(true, false)]
@@ -70,7 +84,6 @@ codeunit 50205 "ShipmentComissionMgtNTG"
     local procedure OnBeforeCalculateShipmentComissionLine(var SalesLine: Record "Sales Line"; var Total: Decimal; var HandledLine: Boolean)
     begin
     end;
-
 
     [IntegrationEvent(true, false)]
     local procedure OnAfterCalculateShipmentComissionLine(var SalesLine: Record "Sales Line"; var Total: Decimal)
