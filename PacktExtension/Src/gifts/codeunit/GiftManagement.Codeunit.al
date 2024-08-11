@@ -4,7 +4,7 @@ codeunit 50202 "Gift Management_CUS_NTG"
     var
         SalesLine: Record "Sales Line";
         Handled: Boolean;
-        GiftAlreadyAppliedLbl: Label 'Gifts based on these sales lines are already applied';
+    //GiftAlreadyAppliedLbl: Label 'Gifts based on these sales lines are already applied';
     begin
         SalesLine.SetRange("Document Type", SalesHeader."Document Type");
         SalesLine.SetRange("Document No.", SalesHeader."No.");
@@ -38,7 +38,7 @@ codeunit 50202 "Gift Management_CUS_NTG"
         GiftCampaign.SetFilter(StartingDate, '<=%1', SalesHeader."Order Date");
         GiftCampaign.SetFilter(EndingDate, '>=%1', SalesHeader."Order Date");
         GiftCampaign.SetRange(Inactive, false);
-        GiftCampaign.SetFilter(MinimumOrderQuantity, '<= %1', SalesLine.Quantity);
+        GiftCampaign.SetFilter(MinimumOrderQuantity, '<=%1', SalesLine.Quantity);
 
         if GiftCampaign.FindFirst() then begin
             LineNo := GetLastSalesDocumentLineNo(SalesHeader);
@@ -83,6 +83,7 @@ codeunit 50202 "Gift Management_CUS_NTG"
                 GiftCampaign.SetFilter(EndingDate, '>=%1', SalesHeader."Order Date");
                 GiftCampaign.SetRange(Inactive, false);
                 GiftCampaign.SetFilter(MinimumOrderQuantity, '> %1', Rec.Quantity);
+                //GiftCampaign.FindFirst();
                 if GiftCampaign.FindFirst() then begin
                     //Integration event raised
                     OnBeforeFreeGiftAlert(Rec, Handled);

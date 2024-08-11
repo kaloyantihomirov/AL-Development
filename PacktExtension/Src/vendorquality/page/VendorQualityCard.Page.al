@@ -4,6 +4,7 @@ page 50204 "Vendor Quality Card_CUS_NTG"
     PageType = Card;
     ApplicationArea = All;
     InsertAllowed = false;
+    UsageCategory = Administration;
     SourceTable = "Vendor Quality_CUS_NTG";
     AdditionalSearchTerms = 'vendor rating, vendors';
     AboutTitle = 'About Vendor Quality';

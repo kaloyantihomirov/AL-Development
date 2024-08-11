@@ -66,6 +66,37 @@ codeunit 50203 VendorQualityMgt_CUS_NTG
         exit(Total * (-1));
     end;
 
+    [EventSubscriber(ObjectType::Table, Database::Vendor, OnAfterOnInsert, '', false, false)]
+    local procedure OnAfterOnInsertCreateVendorQuality(var Vendor: Record Vendor)
+    var
+        VendorQuality: Record "Vendor Quality_CUS_NTG";
+    begin
+        VendorQuality.Init();
+        VendorQuality."Vendor No." := Vendor."No.";
+        VendorQuality.CalcFields("Vendor Name");
+        if VendorQuality.Insert() then;
+    end;
+
+    // [EventSubscriber(ObjectType::Table, Database::Vendor, OnAfterInsertEvent, '', false, false)]
+    // local procedure OnAfterInsertEventCreateVendorQuality(var Vendor: Record Vendor; RunTrigger: Boolean)
+    // var
+    //     VendorQuality: Record "Vendor Quality_CUS_NTG";
+    // begin
+    //     VendorQuality.Init();
+    //     VendorQuality."Vendor No." := Vendor."No.";
+    //     VendorQuality.CalcFields("Vendor Name");
+    //     if VendorQuality.Insert() then;
+    // end;
+
+    [EventSubscriber(ObjectType::Table, Database::Vendor, OnAfterDeleteEvent, '', false, false)]
+    local procedure OnAfterDeleteEventDeleteVendorQuality(var Rec: Record Vendor; RunTrigger: Boolean)
+    var
+        VendorQuality: Record "Vendor Quality_CUS_NTG";
+    begin
+        if VendorQuality.Get(Rec."No.") then
+            VendorQuality.Delete(RunTrigger);
+    end;
+
     [IntegrationEvent(true, false)]
     local procedure OnBeforeCalculateVendorRate(var VendorQuality: Record "Vendor Quality_CUS_NTG"; var Handled: Boolean)
     begin

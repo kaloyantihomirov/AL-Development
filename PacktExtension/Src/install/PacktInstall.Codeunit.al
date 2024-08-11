@@ -8,12 +8,26 @@ codeunit 50204 PacktInstall_CUS_NTG
         PacktSetup: Record "Packt Setup_CUS_NTG";
     begin
         if CustomerCategory.IsEmpty() then
-            InsertDefaultCustomerCategory();
+            InsertDefaultCustomerCategories();
         if PacktSetup.IsEmpty() then
             InsertDefaultSetup();
+        InitialSyncOfVendorQualitiesWithVendors();
     end;
 
-    local procedure InsertDefaultCustomerCategory()
+    local procedure InitialSyncOfVendorQualitiesWithVendors()
+    var
+        Vendor: Record Vendor;
+        VendorQuality: Record "Vendor Quality_CUS_NTG";
+    begin
+        VendorQuality.SetAutoCalcFields("Vendor Name");
+        if Vendor.FindSet() then
+            repeat
+                VendorQuality."Vendor No." := Vendor."No.";
+                if VendorQuality.Insert() then;
+            until Vendor.Next() = 0;
+    end;
+
+    local procedure InsertDefaultCustomerCategories()
     begin
         InsertCustomerCategory('DEFAULT', 'Default', true);
         InsertCustomerCategory('GOLD', 'Gold customers', false);
