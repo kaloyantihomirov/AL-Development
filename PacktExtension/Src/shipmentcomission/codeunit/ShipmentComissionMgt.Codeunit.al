@@ -3,18 +3,23 @@ codeunit 50205 "ShipmentComissionMgtNTG"
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Release Sales Document", OnBeforeReleaseSalesDoc, '', false, false)]
     local procedure AssignShipmentComission(var SalesHeader: Record "Sales Header")
     var
+        PacktSetup: Record "Packt Setup_CUS_NTG";
         Total: Decimal;
+        IShipmentCommisionCalc: Interface IShipmentCommisionCalculation_CUST;
     begin
-        GetShipmentComission(SalesHeader, Total);
+        PacktSetup.Get();
+        IShipmentCommisionCalc := PacktSetup."Shipmt Commission Calc. Method";
+        IShipmentCommisionCalc.GetShipmentCommission(SalesHeader, Total);
+        //GetShipmentCommission(SalesHeader, Total);
         AddItemCharge(SalesHeader, Total);
     end;
 
-    procedure GetShipmentComission(SalesHeader: Record "Sales Header"; var Total: Decimal)
+    procedure GetShipmentCommission(SalesHeader: Record "Sales Header"; var Total: Decimal)
     var
         SalesLine: Record "Sales Line";
         Handled, HandledLine : Boolean;
     begin
-        OnBeforeGetShipmentComission(SalesHeader, Handled, Total);
+        OnBeforeGetShipmentComission(SalesHeader, Total, Handled);
 
         if Handled then
             exit;
@@ -71,7 +76,7 @@ codeunit 50205 "ShipmentComissionMgtNTG"
     end;
 
     [IntegrationEvent(true, false)]
-    local procedure OnBeforeGetShipmentComission(var SalesHeader: Record "Sales Header"; var Handled: Boolean; var Total: Decimal)
+    local procedure OnBeforeGetShipmentComission(var SalesHeader: Record "Sales Header"; var Total: Decimal; var Handled: Boolean)
     begin
     end;
 

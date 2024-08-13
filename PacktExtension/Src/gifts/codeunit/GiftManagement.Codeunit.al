@@ -66,6 +66,12 @@ codeunit 50202 "Gift Management_CUS_NTG"
             exit(0);
     end;
 
+    [EventSubscriber(ObjectType::Table, Database::"Sales Line", OnAfterDeleteEvent, '', false, false)]
+    local procedure OnAfterDeleteReenableGiftLineIfDeleted(var Rec: Record "Sales Line")
+    begin
+
+    end;
+
     [EventSubscriber(ObjectType::Table, Database::"Sales Line", OnAfterValidateEvent, Quantity, false, false)]
     local procedure CheckGiftEligibility(var Rec: Record "Sales Line")
     var

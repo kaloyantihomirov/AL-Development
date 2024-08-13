@@ -12,7 +12,7 @@ page 50200 "Packt Setup_CUS_NTG"
     {
         area(Content)
         {
-            group(Group)
+            group(General)
             {
                 field("Minimum Accepted Vendor Rate"; Rec."Minimum Accepted Vendor Rate")
                 {
