@@ -35,7 +35,6 @@ table 50202 "Gift Campaign_CUS_NTG"
         {
             Caption = 'Item No.';
             TableRelation = Item;
-            Editable = false;
         }
         field(3; StartingDate; Date)
         {

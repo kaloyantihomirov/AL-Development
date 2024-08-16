@@ -20,7 +20,6 @@ page 50203 "Gift Campaigns List_CUS_NTG"
                 }
                 field(ItemNo; Rec.ItemNo)
                 {
-                    Editable = true;
                 }
                 field(StartingDate; Rec.StartingDate)
                 {

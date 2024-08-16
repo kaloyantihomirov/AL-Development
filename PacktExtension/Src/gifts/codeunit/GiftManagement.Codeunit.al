@@ -4,25 +4,45 @@ codeunit 50202 "Gift Management_CUS_NTG"
     var
         SalesLine: Record "Sales Line";
         Handled: Boolean;
-    //GiftAlreadyAppliedLbl: Label 'Gifts based on these sales lines are already applied';
     begin
         SalesLine.SetRange("Document Type", SalesHeader."Document Type");
         SalesLine.SetRange("Document No.", SalesHeader."No.");
         SalesLine.SetRange(Type, SalesLine.Type::Item);
         SalesLine.SetFilter("Line Discount %", '<>100');
-        SalesLine.SetRange(GiftApplied_CUS_NTG, false);
+        SalesLine.SetRange(IsGiftLine_CUS_NTG, false);
 
         if SalesLine.FindSet() then
             repeat
                 //Integration event raised
                 OnBeforeFreeGiftSalesLineAdded(SalesHeader, SalesLine, Handled);
-                AddFreeGiftSalesLine(SalesHeader, SalesLine, Handled);
+
+                if not SalesLineHasChild(SalesLine) then
+                    AddFreeGiftSalesLine(SalesHeader, SalesLine, Handled);
+
                 //Integration event raised
                 OnAfterFreeGiftSalesLineAdded(SalesHeader, SalesLine);
             until SalesLine.Next() = 0;
     end;
 
-    local procedure AddFreeGiftSalesLine(var SalesHeader: Record "Sales Header"; var SalesLine: Record "Sales Line"; var Handled: Boolean)
+    local procedure SalesLineHasChild(SalesLine: Record "Sales Line"): Boolean
+    var
+        SalesLn: Record "Sales Line";
+    begin
+        SalesLn.SetRange("Document Type", SalesLine."Document Type");
+        SalesLn.SetRange("Document No.", SalesLine."Document No.");
+        SalesLn.SetRange(Type, SalesLine.Type::Item);
+
+        if SalesLn.FindSet() then
+            repeat
+                if SalesLn."Parent Line No._CUS_NTG" = SalesLine."Line No." then exit(true);
+            until SalesLn.Next() = 0;
+
+        exit(false);
+    end;
+
+    local procedure AddFreeGiftSalesLine(var SalesHeader: Record "Sales Header";
+                                         var SalesLine: Record "Sales Line";
+                                         var Handled: Boolean)
     var
         GiftCampaign: Record "Gift Campaign_CUS_NTG";
         Customer: Record Customer;
@@ -47,10 +67,9 @@ codeunit 50202 "Gift Management_CUS_NTG"
             SalesLineGift."Line No." := LineNo + 10000;
             SalesLineGift.Validate(Quantity, GiftCampaign.GiftQuantity);
             SalesLineGift.Validate("Line Discount %", 100);
-            if SalesLineGift.Insert() then begin
-                SalesLine.Validate(GiftApplied_CUS_NTG, true);
-                SalesLine.Modify();
-            end;
+            SalesLineGift.Validate("Parent Line No._CUS_NTG", SalesLine."Line No.");
+            SalesLineGift.Validate(IsGiftLine_CUS_NTG, true);
+            if SalesLineGift.Insert() then;
         end;
     end;
 
@@ -69,6 +88,7 @@ codeunit 50202 "Gift Management_CUS_NTG"
     [EventSubscriber(ObjectType::Table, Database::"Sales Line", OnAfterDeleteEvent, '', false, false)]
     local procedure OnAfterDeleteReenableGiftLineIfDeleted(var Rec: Record "Sales Line")
     begin
+        // if Rec.IsGiftLine_CUS_NTG then O;
 
     end;
 

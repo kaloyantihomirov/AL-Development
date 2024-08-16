@@ -21,7 +21,7 @@ table 50201 "Packt Setup_CUS_NTG"
             Caption = 'Default Charge (Item)';
             TableRelation = "Item Charge";
         }
-        field(10; "Shipmt Commission Calc. Method"; Integer)
+        field(10; "Shipmt Commission Calc. Method"; enum "Shipm. Comm. Calc Method_CUST")
         {
             Caption = 'Shipment Commission Calc. Method';
         }

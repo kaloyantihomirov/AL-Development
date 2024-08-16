@@ -1,6 +1,6 @@
-codeunit 50206 "Ship. Comm. Calc Base_CUST" implements IShipmentCommisionCalculation_CUST
+codeunit 50206 "Shipm. Comm. Calc Base_CUST" implements IShipmentCommisionCalculation_CUST
 {
-    procedure GetShipmentComission(SalesHeader: Record "Sales Header"; var Total: Decimal)
+    procedure GetShipmentCommission(SalesHeader: Record "Sales Header"; var Total: Decimal)
     var
         SalesLine: Record "Sales Line";
     begin

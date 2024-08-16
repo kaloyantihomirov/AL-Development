@@ -23,6 +23,9 @@ page 50200 "Packt Setup_CUS_NTG"
                 field("Default Charge (Item)"; Rec."Default Charge (Item)")
                 {
                 }
+                field("Shipmt Commission Calc. Method"; Rec."Shipmt Commission Calc. Method")
+                {
+                }
             }
         }
     }
