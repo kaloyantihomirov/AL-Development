@@ -31,13 +31,10 @@ codeunit 50202 "Gift Management_CUS_NTG"
         SalesLn.SetRange("Document Type", SalesLine."Document Type");
         SalesLn.SetRange("Document No.", SalesLine."Document No.");
         SalesLn.SetRange(Type, SalesLine.Type::Item);
+        SalesLn.SetRange(IsGiftLine_CUS_NTG, true);
+        SalesLn.SetRange("Parent Line No._CUS_NTG", SalesLine."Line No.");
 
-        if SalesLn.FindSet() then
-            repeat
-                if SalesLn."Parent Line No._CUS_NTG" = SalesLine."Line No." then exit(true);
-            until SalesLn.Next() = 0;
-
-        exit(false);
+        exit(not SalesLn.IsEmpty());
     end;
 
     local procedure AddFreeGiftSalesLine(var SalesHeader: Record "Sales Header";

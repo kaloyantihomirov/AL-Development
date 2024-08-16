@@ -31,11 +31,13 @@ codeunit 50205 "ShipmentComissionMgtNTG"
         if SalesLine.FindSet() then
             repeat
                 OnBeforeCalculateShipmentComissionLine(SalesLine, Total, HandledLine);
+
                 if not HandledLine then
                     if SalesLine.Quantity < 10 then
                         Total += 1.5
                     else
                         Total += 5;
+                        
                 OnAfterCalculateShipmentComissionLine(SalesLine, Total);
             until SalesLine.Next() = 0;
 
