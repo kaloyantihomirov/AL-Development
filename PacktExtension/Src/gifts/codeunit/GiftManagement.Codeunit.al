@@ -85,13 +85,6 @@ codeunit 50202 "Gift Management_CUS_NTG"
             exit(0);
     end;
 
-    [EventSubscriber(ObjectType::Table, Database::"Sales Line", OnAfterDeleteEvent, '', false, false)]
-    local procedure OnAfterDeleteReenableGiftLineIfDeleted(var Rec: Record "Sales Line")
-    begin
-        // if Rec.IsGiftLine_CUS_NTG then O;
-
-    end;
-
     [EventSubscriber(ObjectType::Table, Database::"Sales Line", OnAfterValidateEvent, Quantity, false, false)]
     local procedure CheckGiftEligibility(var Rec: Record "Sales Line")
     var
@@ -108,12 +101,14 @@ codeunit 50202 "Gift Management_CUS_NTG"
                 GiftCampaign.SetFilter(StartingDate, '<=%1', SalesHeader."Order Date");
                 GiftCampaign.SetFilter(EndingDate, '>=%1', SalesHeader."Order Date");
                 GiftCampaign.SetRange(Inactive, false);
-                GiftCampaign.SetFilter(MinimumOrderQuantity, '> %1', Rec.Quantity);
-                //GiftCampaign.FindFirst();
+                GiftCampaign.SetFilter(MinimumOrderQuantity, '>%1', Rec.Quantity);
+
                 if GiftCampaign.FindFirst() then begin
                     //Integration event raised
                     OnBeforeFreeGiftAlert(Rec, Handled);
+
                     DoGiftCheck(Rec, GiftCampaign, Handled);
+
                     //Integration event raised
                     OnAfterFreeGiftAlert(Rec);
                 end;

@@ -55,5 +55,10 @@ page 50203 "Gift Campaigns List_CUS_NTG"
             Caption = 'Inactive Gift Campaigns';
             Filters = where(Inactive = const(true));
         }
+        view(OngoingCampaigns)
+        {
+            Caption = 'Ongoing Gift Campaigns';
+            //Filters = where()
+        }
     }
 }
