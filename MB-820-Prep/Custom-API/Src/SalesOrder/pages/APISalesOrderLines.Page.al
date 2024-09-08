@@ -42,7 +42,12 @@ page 50106 APISalesOrderLines
     begin
         SalesHeader.GetBySystemId(Rec."Header Id");
         Rec."Document No." := SalesHeader."No.";
-        Rec.Validate("Sell-to Customer No.", '20000');
+        Rec."Sell-to Customer No." := Rec."Sell-to Customer No.";
     end;
 
+    trigger OnInsertRecord(BelowxRec: Boolean): Boolean
+    begin
+        Rec."Document Type" := Rec."Document Type"::Order;
+        exit(true);
+    end;
 }
