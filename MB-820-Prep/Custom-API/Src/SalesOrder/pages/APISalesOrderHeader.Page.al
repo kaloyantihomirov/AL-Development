@@ -10,6 +10,7 @@ page 50105 APISalesOrderHeader
     EntitySetName = 'mySalesOrderHeaders';
 
     SourceTable = "Sales Header";
+    SourceTableView = where("Document Type" = const(Order));
     ODataKeyFields = SystemId;
 
     DelayedInsert = true;
@@ -33,7 +34,9 @@ page 50105 APISalesOrderHeader
             {
                 EntitySetName = 'mySalesOrderLines';
                 EntityName = 'mySalesOrderLine';
-                SubPageLink = "Header Id" = field(SystemId);
+                SubPageLink = "Document Type" = field("Document Type"),
+                              "Document No." = field("No."),
+                              "Sell-to Customer No." = field("Sell-to Customer No.");
             }
         }
     }
