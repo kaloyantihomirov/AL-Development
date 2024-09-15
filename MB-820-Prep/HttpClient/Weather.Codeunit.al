@@ -1,53 +1,67 @@
 codeunit 60100 Weather
 {
-    procedure GetWeatherTemperatureInCelsiusForTown(Town: Text) Temperature: Decimal
     var
-        Setup: Record Setup;
+        BaseWeatherUri: Label 'http://api.weatherapi.com/v1/current.json', Locked = true;
+
+    procedure GetWeatherTemperatureForTown(Town: Text; Unit: Char) Temperature: Decimal
+    var
         Client: HttpClient;
-        Request: HttpRequestMessage;
-        Response: HttpResponseMessage;
-        Headers: HttpHeaders;
         Content: HttpContent;
         ContentHeaders: HttpHeaders;
-        Uri: Text;
-        Params: List of [Text];
+        Request: HttpRequestMessage;
+        Response: HttpResponseMessage;
         IsSuccessful: Boolean;
         ResponseTxt: Text;
         ResponseJson: JsonObject;
-        CannotProcessRequestLbl: Label 'Error while processing the request!';
+        ServiceCallErr: Label 'Web service call failed';
+        ServiceStatusErr: Label 'Web service status error';
+        ErrorInfoObject: ErrorInfo;
+        HttpStatusCode: Integer;
     begin
-        Client.Timeout := 5 * 60 * 1000;
-        Headers := Client.DefaultRequestHeaders;
-        Headers.Add('Accept', '*/*');
-        Headers.Add('Connection', 'keep-alive');
-        Headers.Add('Accept-Encoding', 'gzip, deflate, br');
+        if ((LowerCase(Unit) <> 'c') and (LowerCase(Unit) <> 'f')) then begin
+            ErrorInfoObject.DetailedMessage := 'The provided unit for temperature is not valid. (Should be Celsius or Fahrenheit.)';
+            ErrorInfoObject.Message := 'Invalid temperature unit.';
+            Error(ErrorInfoObject);
+        end;
 
         Content.GetHeaders(ContentHeaders);
+
         if ContentHeaders.Contains('Content-Type') then
             ContentHeaders.Remove('Content-Type');
-
         ContentHeaders.Add('Content-Type', 'application/json');
-        Request.Content := Content;
+        if ContentHeaders.Contains('Content-Encoding') then
+            ContentHeaders.Remove('Content-Encoding');
+        ContentHeaders.Add('Content-Encoding', 'UTF8');
 
-        Params.Add('key=' + Setup.GetWeatherAPIKey());
-        Params.Add('q=' + Town);
+        Request.SetRequestUri(GetRequestUri(Town));
+        Request.Method('GET');
+        Request.Content(Content);
 
-        //Uri := GetUriWithQueryParams('http://api.weatherapi.com/v1/current.json', Params);
-        Uri := 'http://api.weatherapi.com/v1/current.json?key=f9caa94776a34146b97205336241309&q=Sofia';
-
-        Request.SetRequestUri(Uri);
-        Request.Method := 'GET';
         IsSuccessful := Client.Send(Request, Response);
 
-        if not IsSuccessful then
-            Error(CannotProcessRequestLbl);
+        if not IsSuccessful then begin
+            ErrorInfoObject.DetailedMessage := 'Sorry, we could not retrive the weather info right now.';
+            ErrorInfoObject.Message := ServiceCallErr;
+            Error(ErrorInfoObject);
+        end;
 
-        if not Response.IsSuccessStatusCode() then
-            Error(CannotProcessRequestLbl);
+        if not Response.IsSuccessStatusCode() then begin
+            HttpStatusCode := Response.HttpStatusCode();
+            ErrorInfoObject.DetailedMessage := 'Sorry, we could not retrive the weather info right now.';
+            ErrorInfoObject.Message := Format(ServiceStatusErr, HttpStatusCode, Response.ReasonPhrase());
+            Error(ErrorInfoObject);
+        end;
 
         Response.Content.ReadAs(ResponseTxt);
+
         if ResponseJson.ReadFrom(ResponseTxt) then begin
-            Evaluate(Temperature, GetJsonField(ResponseJson, 'temp_c'));
+            case LowerCase(Unit) of
+                'c':
+                    Evaluate(Temperature, GetJsonField(ResponseJson, 'temp_c'));
+                'f':
+                    Evaluate(Temperature, GetJsonField(ResponseJson, 'temp_f'));
+            end;
+
             exit(Temperature);
         end;
     end;
@@ -64,18 +78,29 @@ codeunit 60100 Weather
         exit(FieldJSONToken.AsValue().AsText());
     end;
 
-    local procedure GetUriWithQueryParams(BaseUri: Text; QueryParams: List of [Text]) FullUri: Text
+    procedure GetUriWithQueryParams(BaseUri: Text; QueryParams: Dictionary of [Text, Text]) FullUri: Text
     var
-        Count: Integer;
+        DictionaryKey: Text;
+        ParamsSeparator: Text;
     begin
-        FullUri := BaseUri + '?';
+        ParamsSeparator := '&&';
+        FullUri := '';
+        FullUri := FullUri + BaseUri + '?';
 
-        for Count := 1 to QueryParams.Count() - 1 do
-            FullUri := FullUri + QueryParams.Get(Count) + '&';
+        foreach DictionaryKey in QueryParams.Keys() do
+            FullUri := FullUri + StrSubstNo('%1=%2%3', DictionaryKey, QueryParams.Get(DictionaryKey), ParamsSeparator);
 
-        FullUri := FullUri + QueryParams.Get(QueryParams.Count());
-
-        Message(FullUri);
+        FullUri := FullUri.Substring(1, StrLen(FullUri) - 1);
     end;
 
+    local procedure GetRequestUri(Town: Text): Text
+    var
+        Setup: Record Setup;
+        QueryParams: Dictionary of [Text, Text];
+    begin
+        QueryParams.Add('key', Setup.GetWeatherAPIKey());
+        QueryParams.Add('q', Town);
+
+        exit(GetUriWithQueryParams(BaseWeatherUri, QueryParams));
+    end;
 }

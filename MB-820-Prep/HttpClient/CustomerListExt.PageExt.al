@@ -13,9 +13,9 @@ pageextension 60101 CustomerListExt extends "Customer List"
 
                 trigger OnAction()
                 var
-                    Weather: codeunit Weather;
+                    Weather: Codeunit Weather;
                 begin
-                    Message(Format(Weather.GetWeatherTemperatureInCelsiusForTown('Sofia')));
+                    Message(Format(Weather.GetWeatherTemperatureForTown('Sofia', 'c')));
                 end;
             }
         }
