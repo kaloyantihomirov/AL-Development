@@ -78,7 +78,7 @@ codeunit 60100 Weather
         exit(FieldJSONToken.AsValue().AsText());
     end;
 
-    procedure GetUriWithQueryParams(BaseUri: Text; QueryParams: Dictionary of [Text, Text]) FullUri: Text
+    local procedure GetUriWithQueryParams(BaseUri: Text; QueryParams: Dictionary of [Text, Text]) FullUri: Text
     var
         DictionaryKey: Text;
         ParamsSeparator: Text;
