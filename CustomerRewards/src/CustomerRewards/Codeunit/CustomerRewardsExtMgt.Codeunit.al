@@ -27,7 +27,7 @@ codeunit 50101 "Customer Rewards Ext. Mgt. NTG"
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Customer Rewards Ext. Mgt. NTG", OnGetActivationCodeStatusFromServer, '', false, false)]
     local procedure OnGetActivationCodeStatusFromServerSubscriber(ActivationCode: Text)
     var
-        ActivationCodeInfo: record "Activation Code Inform. NTG";
+        ActivationCodeInfo: Record "Activation Code Inform. NTG";
         ResponseTxt: Text;
         Result: JsonToken;
         ResponseJson: JsonToken;
@@ -109,7 +109,7 @@ codeunit 50101 "Customer Rewards Ext. Mgt. NTG"
     var
         Customer: Record Customer;
     begin
-        if SalesHeader.Status = SalesHeader.Status::Released then
+        if SalesHeader.Status <> SalesHeader.Status::Released then
             exit;
 
         Customer.Get(SalesHeader."Sell-to Customer No.");
