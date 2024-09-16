@@ -12,10 +12,11 @@ codeunit 50151 CustomerRewardsTest
         LibrarySales: Codeunit "Library - Sales";
         CustomerRewardsNotActivatedLbl: Label 'Customer Rewards should not be activated';
         CustomerRewardsActivatedLbl: Label 'Customer Rewards should be activated';
-        BronzeLevelTxt: Label 'BRONZE';
-        SilverLevelTxt: Label 'SILVER';
-        GoldLevelTxt: Label 'GOLD';
+        BronzeLevelTxt: Label 'Bronze';
+        SilverLevelTxt: Label 'Silver';
+        GoldLevelTxt: Label 'Gold';
         NoLevelTxt: Label 'NONE';
+        CustPermissionFullLbl: Label 'CustRewardsFull', Locked = true;
 
     [Test]
 
@@ -53,7 +54,7 @@ codeunit 50151 CustomerRewardsTest
         // [Given] The Customer Rewards Wizard
         Initialise();
 
-        LibraryLowerPermissions.SetO365BusFull();
+        LibraryLowerPermissions.SetExactPermissionSet(CustPermissionFullLbl);
 
         // [When] The Wizard is opened
         CustomerRewardsWizardPage.OpenView();
@@ -82,7 +83,7 @@ codeunit 50151 CustomerRewardsTest
         Initialise();
         Commit();
 
-        LibraryLowerPermissions.SetO365BusFull();
+        LibraryLowerPermissions.SetExactPermissionSet(CustPermissionFullLbl);
         Assert.IsFalse(CustomerRewardsExtMgt.IsCustomerRewardsActivated(), CustomerRewardsNotActivatedLbl);
 
         // [When] User invokes activate action without entering activation code
@@ -109,7 +110,7 @@ codeunit 50151 CustomerRewardsTest
         Initialise();
         Commit();
 
-        LibraryLowerPermissions.SetO365BusFull();
+        LibraryLowerPermissions.SetExactPermissionSet(CustPermissionFullLbl);
         Assert.IsFalse(CustomerRewardsExtMgt.IsCustomerRewardsActivated(), CustomerRewardsNotActivatedLbl);
 
         OpenCustomerRewardsWizardActivationPage(CustomerRewardsWizardPage);
@@ -137,7 +138,7 @@ codeunit 50151 CustomerRewardsTest
         Initialise();
         Commit();
 
-        LibraryLowerPermissions.SetO365BusFull();
+        LibraryLowerPermissions.SetExactPermissionSet(CustPermissionFullLbl);
 
         Assert.IsFalse(CustomerRewardsExtMgt.IsCustomerRewardsActivated(), CustomerRewardsNotActivatedLbl);
 
@@ -166,7 +167,7 @@ codeunit 50151 CustomerRewardsTest
         Initialise();
         Commit();
 
-        LibraryLowerPermissions.SetO365BusFull();
+        LibraryLowerPermissions.SetExactPermissionSet(CustPermissionFullLbl);
         Assert.IsFalse(CustomerRewardsExtMgt.IsCustomerRewardsActivated(), CustomerRewardsNotActivatedLbl);
         MockCustomerRewardsExtMgt.MockActivationResponse(false);
 
@@ -196,7 +197,7 @@ codeunit 50151 CustomerRewardsTest
         Initialise();
         Commit();
 
-        LibraryLowerPermissions.SetO365BusFull();
+        LibraryLowerPermissions.SetExactPermissionSet(CustPermissionFullLbl);
         Assert.IsFalse(CustomerRewardsExtMgt.IsCustomerRewardsActivated(), CustomerRewardsNotActivatedLbl);
         MockCustomerRewardsExtMgt.MockActivationResponse(true);
 
@@ -224,7 +225,7 @@ codeunit 50151 CustomerRewardsTest
         Initialise();
         Commit();
 
-        LibraryLowerPermissions.SetO365BusFull();
+        LibraryLowerPermissions.SetExactPermissionSet(CustPermissionFullLbl);
         Assert.IsFalse(CustomerRewardsExtMgt.IsCustomerRewardsActivated(), CustomerRewardsNotActivatedLbl);
 
         // [When] The user opens the Rewards Level List page 
@@ -247,7 +248,7 @@ codeunit 50151 CustomerRewardsTest
         Initialise();
         Commit();
 
-        LibraryLowerPermissions.SetO365BusFull();
+        LibraryLowerPermissions.SetExactPermissionSet(CustPermissionFullLbl);
         Assert.IsFalse(CustomerRewardsExtMgt.IsCustomerRewardsActivated(), CustomerRewardsNotActivatedLbl);
         ActivateCustomerRewards();
         Assert.IsTrue(CustomerRewardsExtMgt.IsCustomerRewardsActivated(), CustomerRewardsNotActivatedLbl);
@@ -266,7 +267,7 @@ codeunit 50151 CustomerRewardsTest
         // [Scenario] Reward Levels action exists on Customer List page
         // [Given] Customer List page
 
-        LibraryLowerPermissions.SetO365BusFull();
+        LibraryLowerPermissions.SetExactPermissionSet(CustPermissionFullLbl);
 
         // [When] User opens Customer List page
         CustomerListPage.OpenView();
@@ -277,7 +278,7 @@ codeunit 50151 CustomerRewardsTest
     end;
 
     [Test]
-    [HandlerFunctions('CustomerRewardsWizardModalPageHandler')]
+    [HandlerFunctions('CustomerRewardsWizardPageHandler')]
 
     procedure TestRewardLevelsActionOnCustomerListPageOpensCustomerRewardsWizardWhenNotActivated()
     var
@@ -292,18 +293,18 @@ codeunit 50151 CustomerRewardsTest
         Initialise();
         Commit();
 
-        LibraryLowerPermissions.SetO365BusFull();
+        LibraryLowerPermissions.SetExactPermissionSet(CustPermissionFullLbl);
         Assert.IsFalse(CustomerRewardsExtMgt.IsCustomerRewardsActivated(), CustomerRewardsNotActivatedLbl);
 
         // [When] The user clicks on the action 
         CustomerListPage.OpenView();
         CustomerListPage."Reward Levels NTG".Invoke();
 
-        // [Then] Wizard opens. Caught by CustomerRewardsWizardModalPageHandler 
+        // [Then] Wizard opens. Caught by CustomerRewardsWizardPageHandler 
     end;
 
     [Test]
-    [HandlerFunctions('RewardsLevelListPageHandler')]
+    [HandlerFunctions('RewardsLevelListModalPageHandler')]
     procedure TestRewardLevelsActionOnCustomerListPageOpensRewardsLevelListPageWhenActivated()
     var
         CustomerRewardsExtMgt: Codeunit "Customer Rewards Ext. Mgt. NTG";
@@ -325,7 +326,7 @@ codeunit 50151 CustomerRewardsTest
         CustomerListPage.OpenView();
         CustomerListPage."Reward Levels NTG".Invoke();
 
-        // [Then] Rewards Level List opens. Caught by RewardsLevelListPageHandler
+        // [Then] Rewards Level List opens. Caught by RewardsLevelListModalPageHandler
     end;
 
     [Test]
@@ -337,7 +338,7 @@ codeunit 50151 CustomerRewardsTest
         // [Scenario] Customer Card Page has reward fields when opened
         // [Given] Customer Card Page
 
-        LibraryLowerPermissions.SetO365BusFull();
+        LibraryLowerPermissions.SetExactPermissionSet(CustPermissionFullLbl);
 
         //[When] The user opens the Customer Card page 
         CustomerCardPage.OpenView();
@@ -361,7 +362,7 @@ codeunit 50151 CustomerRewardsTest
         Initialise();
         Commit();
 
-        LibraryLowerPermissions.SetO365BusFull();
+        LibraryLowerPermissions.SetExactPermissionSet(CustPermissionFullLbl);
         ActivateCustomerRewards();
 
         // [When] New customer
@@ -375,6 +376,191 @@ codeunit 50151 CustomerRewardsTest
         VerifyCustomerRewardPoints(0, CustomerCardPage.RewardPoints.AsInteger());
     end;
 
+    //TODO: NOT REALLY SURE THAT THIS WILL WORK
+    [Test]
+
+    procedure TestCustomerHasCorrectRewardPointsAfterPostedSalesOrders()
+    var
+        Customer: Record Customer;
+        CustomerCardPage: TestPage "Customer Card";
+    begin
+        // [Scenario] Customer posts 4 Sales orders and his reward points are correctly calculated
+        // [Given] A customer with 4 posted orders
+
+        Initialise();
+        Commit();
+
+        LibraryLowerPermissions.SetExactPermissionSet(CustPermissionFullLbl);
+        ActivateCustomerRewards();
+        LibrarySales.CreateCustomer(Customer);
+
+        // [When] Customer posts 4 sales orders
+        CreateAndPostSalesOrder(Customer."No.");
+        CreateAndPostSalesOrder(Customer."No.");
+        CreateAndPostSalesOrder(Customer."No.");
+        CreateAndPostSalesOrder(Customer."No.");
+
+        // [Then] Reward Points are correctly calculated
+        CustomerCardPage.OpenView();
+        CustomerCardPage.GoToRecord(Customer);
+        VerifyCustomerRewardPoints(4, CustomerCardPage.RewardPoints.AsInteger());
+    end;
+
+    [Test]
+    procedure TestCustomerHasNoRewardLevelAfterPostedSalesOrders()
+    var
+        Customer: Record Customer;
+        CustomerCardPage: TestPage "Customer Card";
+    begin
+        // [Scenario] Customer has no reward level after posting 2 orders (needs 1 more for bronze (>=3))
+        // [Given] A customer with 2 posted orders
+
+        Initialise();
+        Commit();
+
+        LibraryLowerPermissions.SetExactPermissionSet(CustPermissionFullLbl);
+        ActivateCustomerRewards();
+        AddRewardLevel(BronzeLevelTxt, 3);
+        LibrarySales.CreateCustomer(Customer);
+
+        CustomerCardPage.OpenView();
+        CustomerCardPage.GoToRecord(Customer);
+        VerifyCustomerRewardPoints(0, CustomerCardPage.RewardPoints.AsInteger());
+        VerifyCustomerRewardLevel(NoLevelTxt, CustomerCardPage.RewardLevel.Value);
+
+        // [When] Customer posts 2 orders
+        CreateAndPostSalesOrder(Customer."No.");
+        CreateAndPostSalesOrder(Customer."No.");
+
+        // [Then] No reward level is set on the customer, but points are updated
+        CustomerCardPage.GoToRecord(Customer);
+        VerifyCustomerRewardLevel(NoLevelTxt, CustomerCardPage.RewardLevel.Value);
+        VerifyCustomerRewardPoints(2, CustomerCardPage.RewardPoints.AsInteger());
+    end;
+
+    [Test]
+    procedure TestCustomerHasBronzeRewardLevelAfterPostedSalesOrders()
+    var
+        Customer: Record Customer;
+        CustomerCardPage: TestPage "Customer Card";
+    begin
+        // [Scenario] Customer has the correct reward level based on posted orders
+        // [Given] A customer with 4 posted orders
+
+        Initialise();
+        Commit();
+
+        LibraryLowerPermissions.SetExactPermissionSet(CustPermissionFullLbl);
+        ActivateCustomerRewards();
+        LibrarySales.CreateCustomer(Customer);
+        AddRewardLevel(BronzeLevelTxt, 4);
+        CustomerCardPage.OpenView();
+        CustomerCardPage.GoToRecord(Customer);
+        VerifyCustomerRewardPoints(0, CustomerCardPage.RewardPoints.AsInteger());
+        VerifyCustomerRewardLevel(NoLevelTxt, CustomerCardPage.RewardLevel.Value);
+
+        // [When] Customer posts 4 orders
+        CreateAndPostSalesOrder(Customer."No.");
+        CreateAndPostSalesOrder(Customer."No.");
+        CreateAndPostSalesOrder(Customer."No.");
+        CreateAndPostSalesOrder(Customer."No.");
+
+        // [Then] Reward Level and points are correctly set
+        CustomerCardPage.GoToRecord(Customer);
+        VerifyCustomerRewardPoints(4, CustomerCardPage.RewardPoints.AsInteger());
+        VerifyCustomerRewardLevel(BronzeLevelTxt, CustomerCardPage.RewardLevel.Value);
+    end;
+
+    [Test]
+    procedure TestCustomerHasSilverRewardLevelAfterPostedSalesOrders()
+    var
+        Customer: Record Customer;
+        CustomerCard: TestPage "Customer Card";
+    begin
+        // [Scenario] Customer posts 4 sales orders and then has the silver reward level set
+        // [Given] A customer with 4 posted sales orders, a bronze level for 2+ orders, and silver level for 4+ orders
+
+        Initialise();
+        Commit();
+
+        LibraryLowerPermissions.SetExactPermissionSet(CustPermissionFullLbl);
+        ActivateCustomerRewards();
+        LibrarySales.CreateCustomer(Customer);
+        AddRewardLevel(BronzeLevelTxt, 2);
+        AddRewardLevel(SilverLevelTxt, 4);
+
+        //The customer has 0 reward points and no reward level with 0 posted orders
+        CustomerCard.OpenView();
+        CustomerCard.GoToRecord(Customer);
+        VerifyCustomerRewardPoints(0, CustomerCard.RewardPoints.AsInteger());
+        VerifyCustomerRewardLevel(NoLevelTxt, CustomerCard.RewardLevel.Value);
+
+        CreateAndPostSalesOrder(Customer."No.");
+
+        //The customer has 1 reward points for the posted order and still no reward level set
+        CustomerCard.GoToRecord(Customer);
+        VerifyCustomerRewardPoints(1, CustomerCard.RewardPoints.AsInteger());
+        VerifyCustomerRewardLevel(NoLevelTxt, CustomerCard.RewardLevel.Value);
+
+        CreateAndPostSalesOrder(Customer."No.");
+
+        //The customer has 2 reward points for the posted orders and bronze reward level set
+        CustomerCard.GoToRecord(Customer);
+        VerifyCustomerRewardPoints(2, CustomerCard.RewardPoints.AsInteger());
+        VerifyCustomerRewardLevel(BronzeLevelTxt, CustomerCard.RewardLevel.Value);
+
+        CreateAndPostSalesOrder(Customer."No.");
+
+        //The customer has 3 reward points for the posted orders and still bronze reward level set
+        CustomerCard.GoToRecord(Customer);
+        VerifyCustomerRewardPoints(3, CustomerCard.RewardPoints.AsInteger());
+        VerifyCustomerRewardLevel(BronzeLevelTxt, CustomerCard.RewardLevel.Value);
+
+
+        CreateAndPostSalesOrder(Customer."No.");
+
+        // [Then] Reward points (4) and reward level (silver) are correctly set on the card
+        CustomerCard.GoToRecord(Customer);
+        VerifyCustomerRewardPoints(4, CustomerCard.RewardPoints.AsInteger());
+        VerifyCustomerRewardLevel(SilverLevelTxt, CustomerCard.RewardLevel.Value);
+    end;
+
+    [Test]
+    procedure TestCustomerHasGoldRewardLevelAfterPostedSalesOrders()
+    var
+        Customer: Record Customer;
+        CustomerCard: TestPage "Customer Card";
+    begin
+        // [Scenario] Customer has the correct reward level set 
+        // [Given] A customer with 5 orders, and bronze reward level for 3+ orders, silver for 4+, and gold for 5+
+
+        Initialise();
+        Commit();
+
+        LibraryLowerPermissions.SetExactPermissionSet(CustPermissionFullLbl);
+        ActivateCustomerRewards();
+        LibrarySales.CreateCustomer(Customer);
+        AddRewardLevel(BronzeLevelTxt, 3);
+        AddRewardLevel(SilverLevelTxt, 4);
+        AddRewardLevel(GoldLevelTxt, 5);
+
+        CreateAndPostSalesOrder(Customer."No.");
+        CreateAndPostSalesOrder(Customer."No.");
+        CreateAndPostSalesOrder(Customer."No.");
+        CreateAndPostSalesOrder(Customer."No.");
+
+        //Customer has 4 reward points and silver reward level
+        CustomerCard.OpenView();
+        CustomerCard.GoToRecord(Customer);
+        VerifyCustomerRewardPoints(4, CustomerCard.RewardPoints.AsInteger());
+        VerifyCustomerRewardLevel(SilverLevelTxt, CustomerCard.RewardLevel.Value);
+        // [When] Customer posts their 5th order
+        CreateAndPostSalesOrder(Customer."No.");
+        // [Then] Customer has 5 reward points and gold reward level set
+        CustomerCard.GoToRecord(Customer);
+        VerifyCustomerRewardPoints(5, CustomerCard.RewardPoints.AsInteger());
+        VerifyCustomerRewardLevel(GoldLevelTxt, CustomerCard.RewardLevel.Value);
+    end;
 
     local procedure Initialise()
     var
@@ -418,13 +604,42 @@ codeunit 50151 CustomerRewardsTest
         Assert.AreEqual(ExpectedPoints, ActualPoints, 'Reward Points should be the same');
     end;
 
-    [ModalPageHandler]
-    procedure CustomerRewardsWizardModalPageHandler(var CustomerRewardsWizard: TestPage "Customer Rewards Wizard NTG")
+    local procedure CreateAndPostSalesOrder(SellToCustomerNo: Code[20])
+    var
+        SalesHeader: Record "Sales Header";
+        SalesLine: Record "Sales Line";
+        LibraryRandom: Codeunit "Library - Random";
     begin
+        LibrarySales.CreateSalesHeader(SalesHeader, SalesHeader."Document Type"::Order, SellToCustomerNo);
+        LibrarySales.CreateSalesLine(SalesLine, SalesHeader, SalesLine.Type::Item, '', 1);
+        SalesLine.Validate("Unit Price", LibraryRandom.RandIntInRange(5000, 10000));
+        SalesLine.Modify(true);
+        LibrarySales.PostSalesDocument(SalesHeader, true, true);
+    end;
+
+    local procedure AddRewardLevel(Level: Text[20]; MinimumPoints: Integer)
+    var
+        RewardLevel: Record "Reward Level NTG";
+    begin
+        if RewardLevel.Get(Level) then begin
+            RewardLevel."Minimum Reward Points" := MinimumPoints;
+            RewardLevel.Modify();
+        end
+        else begin
+            RewardLevel.Init();
+            RewardLevel.Level := Level;
+            RewardLevel."Minimum Reward Points" := MinimumPoints;
+            RewardLevel.Insert();
+        end;
     end;
 
     [PageHandler]
-    procedure RewardsLevelListPageHandler(var RewardsLevelList: TestPage "Reward Levels List NTG")
+    procedure CustomerRewardsWizardPageHandler(var CustomerRewardsWizard: TestPage "Customer Rewards Wizard NTG")
+    begin
+    end;
+
+    [ModalPageHandler]
+    procedure RewardsLevelListModalPageHandler(var RewardsLevelList: TestPage "Reward Levels List NTG")
     begin
     end;
 
