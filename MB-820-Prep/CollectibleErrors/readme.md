@@ -19,3 +19,5 @@ If there are collected errors, iterate through each one and add them to the "Err
 
 ### 5. Call `ClearCollectedErrors()` Before Opening the Page
 Before opening the respective page, ensure you call `ClearCollectedErrors()` to prevent the built-in error dialog from being displayed.
+
+![Collectible Errors Example](img/collectible-Errors-BC.PNG)
